@@ -1,0 +1,5 @@
+# Render output and local environment
+media/
+.venv/
+__pycache__/
+*.pyc
