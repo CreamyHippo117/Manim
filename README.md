@@ -70,23 +70,52 @@ squares; particles moving along `conj(f)` and never through a pole.
 
 ## Render
 
-```bash
-./render.sh draft     # 480p, 15 fps  (what the frame checks used)
-./render.sh final     # 1920x1080, 60 fps
-./render.sh final30   # 1920x1080, 30 fps
+### From Wing IDE (no command line, no `manim` on PATH)
+
+Open **`render.py`** and press Run. That is the whole procedure. It imports
+manim as a library and drives the renderer itself, so the `manim` command does
+not need to exist on your PATH.
+
+Edit the settings at the top of the file, then Run again:
+
+```python
+QUALITY = "draft"      # "draft" = 854x480 @ 15 fps,  "final" = 1920x1080 @ 60 fps
+SCENES  = "all"        # or a list, e.g. ["04", "05"]
+VERIFY_FIRST = True    # run the 75 maths checks before rendering
+OPEN_WHEN_DONE = False # True asks your OS to open each finished video
 ```
 
-Or one scene at a time — this is the draft command, `-pql` at 15 fps:
+`render.py` puts its own folder on `sys.path`, so Wing's working directory does
+not matter — it only has to sit beside the `basel/` folder.
+
+**If it says manim does not exist**, it is almost always that Wing is using a
+different interpreter from the one manim is installed for. `render.py` prints
+the exact interpreter path it is running under and the exact `pip install`
+command for *that* interpreter. To point Wing at the virtualenv instead:
+*Project → Project Properties → Python Executable → Custom*, and choose
+`.venv/bin/python` (`.venv\Scripts\python.exe` on Windows).
+
+It also checks for `ffmpeg` and `latex` up front and names the install command
+for your platform, since a missing TeX distribution otherwise fails deep inside
+the first equation.
+
+### From a terminal
+
+```bash
+python render.py              # same thing, same settings
+./render.sh draft             # 480p, 15 fps
+./render.sh final             # 1920x1080, 60 fps
+```
+
+Or one scene at a time through the manim CLI, if you have it — this is the
+draft command, `-pql` at 15 fps:
 
 ```bash
 .venv/bin/python -m manim render -pql --fps 15 basel/scenes/s04_accumulation.py Scene04Accumulation
 ```
 
-Drop `-p` to skip opening the player (headless machines):
-
-```bash
-.venv/bin/python -m manim render -ql --fps 15 basel/scenes/s01_mystery.py Scene01Mystery
-```
+Drop `-p` to skip opening the player (headless machines). Note `python -m manim`
+works even when the bare `manim` command is not on PATH.
 
 1080p final for one scene:
 
@@ -95,7 +124,7 @@ Drop `-p` to skip opening the player (headless machines):
     basel/scenes/s05_sprinkler.py Scene05Sprinkler
 ```
 
-Output lands in `media/videos/<module>/<height>p<fps>/`.
+Output lands in `media/videos/`.
 
 ## Retiming
 
